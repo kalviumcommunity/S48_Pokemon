@@ -1,1 +1,1 @@
-This is a website that displays different pokemon and thier attributes
+This is a website that displays different pokemon
