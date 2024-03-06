@@ -1,0 +1,52 @@
+[
+    {
+      "Pokemon_Name": "Mudkip",
+      "Pokemon_Type": "Water",
+      "Region": "Hoenn"
+    },
+    {
+      "Pokemon_Name": "Turtwig",
+      "Pokemon_Type": "Grass",
+      "Region": "Sinnoh"
+    },
+    {
+      "Pokemon_Name": "Chimchar",
+      "Pokemon_Type": "Fire",
+      "Region": "Sinnoh"
+    },
+    {
+      "Pokemon_Name": "Piplup",
+      "Pokemon_Type": "Water",
+      "Region": "Sinnoh"
+    },
+    {
+      "Pokemon_Name": "Snivy",
+      "Pokemon_Type": "Grass",
+      "Region": "Unova"
+    },
+    {
+      "Pokemon_Name": "Tepig",
+      "Pokemon_Type": "Fire",
+      "Region": "Unova"
+    },
+    {
+      "Pokemon_Name": "Oshawott",
+      "Pokemon_Type": "Water",
+      "Region": "Unova"
+    },
+    {
+      "Pokemon_Name": "Chespin",
+      "Pokemon_Type": "Grass",
+      "Region": "Kalos"
+    },
+    {
+      "Pokemon_Name": "Fennekin",
+      "Pokemon_Type": "Fire",
+      "Region": "Kalos"
+    },
+    {
+      "Pokemon_Name": "Froakie",
+      "Pokemon_Type": "Water",
+      "Region": "Kalos"
+    }
+  ]

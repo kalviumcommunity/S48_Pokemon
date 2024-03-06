@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const EntityComponent = () => {
-    // Dummy data related to Pokémon
-    const pokemonData = [
-        { id: 1, name: 'Pikachu', type: 'Electric' },
-        { id: 2, name: 'Bulbasaur', type: 'Grass/Poison' },
-        { id: 3, name: 'Charmander', type: 'Fire' },
-        // Add more Pokémon data as needed
-    ];
+    const [pokemonData, setPokemonData] = useState([]);
+
+    useEffect(() => {
+        // Fetch Pokémon data from the server
+        fetch('http://localhost:3000/Read/')
+            .then(response => response.json())
+            .then(data => setPokemonData(data))
+            .catch(error => console.error('Error fetching Pokémon data:', error));
+    }, []); // Empty dependency array ensures the effect runs once when the component mounts
 
     return (
         <div>

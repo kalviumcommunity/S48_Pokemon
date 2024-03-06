@@ -1,51 +1,60 @@
 const express = require('express');
 const router = express.Router();
+const { MongoClient, ObjectId } = require("mongodb");
 
-// Mock data for demonstration
-let data = [
-    { id: 1, name: 'bob', age: 18 },
-    { id: 2, name: 'tom', age: 20 },
-    { id: 3, name: 'harry', age: 80 }
-];
+// Replace this with your MongoDB connection URI
+const uri = "mongodb+srv://rk1942:rishabh1942@cluster0.bnbgo1l.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+// Connect to MongoDB
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Helper function to retrieve data from MongoDB
+async function fetchDataFromMongoDB() {
+  try {
+    await client.connect();
+    const database = client.db("Pokemon");
+    const collection = database.collection("pokemon");
+    return await collection.find().toArray();
+  } finally {
+    // No need to close the connection immediately; let it be managed elsewhere
+  }
+}
 
 // CRUD operations
 
-// Create (POST) a new item
-router.post('/create', (req, res) => {
-    const newItem = req.body; 
-    newItem.id = data.length + 1;
-    data.push(newItem);
-    res.json(newItem);
-});
-
 // Read (GET) all items
-router.get('/read', (req, res) => {
-    res.json(data);
-});
-
-// Update (PUT) an existing item by ID
-router.put('/update/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const updateItem = req.body; 
-    const index = data.findIndex(item => item.id === id);
-    if (index !== -1) {
-        data[index] = { ...data[index], ...updateItem };
-        res.json(data[index]);
-    } else {
-        res.status(404).json({ message: 'Item not found' });
-    }
+router.get('/crud/Read', async (req, res) => {
+  // Fetch data from MongoDB
+  const data = await fetchDataFromMongoDB();
+  res.json(data);
 });
 
 // Delete (DELETE) an item by ID
-router.delete('/delete/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const index = data.findIndex(item => item.id === id);
-    if (index !== -1) {
-        const deletedItem = data.splice(index, 1);
-        res.json(deletedItem);
-    } else {
-        res.status(404).json({ message: 'Item not found' });
+router.delete('/Delete/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid ID format' });
     }
+
+    await client.connect();
+    const database = client.db("Pokemon");
+    const collection = database.collection("pokemon");
+
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 1) {
+      const updatedData = await fetchDataFromMongoDB();
+      res.json(updatedData);
+    } else {
+      res.status(404).json({ message: 'Item not found' });
+    }
+  } finally {
+    // No need to close the connection immediately; let it be managed elsewhere
+  }
 });
 
 module.exports = router;

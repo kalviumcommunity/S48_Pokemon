@@ -1,59 +1,62 @@
 const express = require('express');
-const app = express();
-const bodyParser = require('body-parser'); // Middleware for parsing request bodies
+const cors = require('cors');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+const mongoose = require('mongoose');
+const Pokemondata = require('./Models/Pokemons.js');
+
 const port = process.env.PUBLIC_PORT || 3000;
+const app = express();
 
-require('dotenv').config();
-const { MongoClient } = require('mongodb');
+app.use(cors());
 app.use(express.json());
-require('dotenv').config();
+app.use(express.urlencoded({ extended: true }));
 
-const router = require('./Routes.js'); // Import your CRUD routes
+async function Connection() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log("Connected to DB");
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+        throw error;
+    }
+}
+
+const router = require('./Routes.js');
 app.use(bodyParser.json());
-
-// Use the CRUD routes under the '/crud' endpoint
 app.use('/crud', router);
 
-// Ping route for basic server status check
-app.get('/ping', (req, res) => {
-  res.json({ message: 'pong' });
-});
-
-const uri = process.env.DATABASE_URI;
-// Create a new MongoDB client with connection settings
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// Home route to check the database connection status
 app.get('/', async (req, res) => {
-  try {
-    // Connect to MongoDB
-    await client.connect();
-    
-    if (client.topology.isConnected()) {
-      // Respond with a JSON indicating that the server is running and the database is connected
-      res.json({ message: 'pong', database_status: 'Connected' });
-      console.log('Database connected');
-    } else {
-      // Respond with a JSON indicating that the server is running but the database is disconnected
-      res.json({ message: 'pong', database_status: 'Disconnected' });
-      console.log('Database disconnected');
+    try {
+        if (mongoose.connection.readyState === 1) {
+            res.json({ message: 'pong', database_status: 'Connected' });
+            console.log('Database connected');
+        } else {
+            res.json({ message: 'pong', database_status: 'Disconnected' });
+            console.log('Database disconnected');
+        }
+    } catch (error) {
+        console.error('Error checking database connection:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
+});
+
+app.get("/getpokemon", async (req, res) => {
+  try {
+      console.log('Fetching Pokemons...');
+      const Pokemons = await Pokemondata.find({});
+      console.log('Fetched Pokemons:', Pokemons);
+      res.json(Pokemons);
   } catch (error) {
-    // Handle errors related to MongoDB connection
-    console.error('Error connecting to the database:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-    // Consider more specific error handling here based on the error type.
+      console.error("Failed to fetch Pokemons:", error);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-if (require.main === module) {
-  // Start the server when running this file directly
-  app.listen(port, () => {
-    console.log(`🚀 server running on PORT: ${port}`);
-  });
-}
+Connection().then(() => {
+    app.listen(port, () => {
+        console.log(`🚀 server running on PORT: ${port}`);
+    });
+});
 
 module.exports = app;

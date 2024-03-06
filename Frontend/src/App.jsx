@@ -1,18 +1,16 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LandingPage from './components/LandingPage'
-import EntityComponent from './EntityComponent'; 
+import './App.css'; // Assuming you're using Create React App, this imports some basic styling.
+import Pokedex from './components/LandingPage'; // Adjust the path according to your file structure
 
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/page2" element={<EntityComponent />} />
-      </Routes>
-    </Router>
+    <div className="App">
+      <header className="App-header">
+        <Pokedex />
+      </header>
+    </div>
   );
-};
+}
 
 export default App;
