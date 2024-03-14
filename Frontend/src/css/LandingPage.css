@@ -1,20 +1,34 @@
-.landing-page {
-    text-align: center;
-    color: red;
-    margin-left: 500px;
-    margin-bottom: 300px;
-  }
-  
-  .button-container {
-    margin-top: 20px;
-  }
-  
-  .login-button,
-  .signup-button {
-    color: black;
-    background-color: white;
-    border: 2px solid black;
-    padding: 10px 20px;
-    margin: 0 10px;
-    cursor: pointer;
-  }
+/* LandingPage.css */
+
+.pokedex-container {
+  text-align: center;
+  margin: 20px;
+}
+
+h2 {
+  color: #333;
+}
+
+.pokemon-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.pokemon-item {
+  border: 1px solid #ddd;
+  margin: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.pokemon-name {
+  font-weight: bold;
+}
+
+.pokemon-type {
+  color: #007bff;
+}
+
+.pokemon-region {
+  color: #28a745;
+}

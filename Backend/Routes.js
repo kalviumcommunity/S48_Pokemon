@@ -15,8 +15,8 @@ const client = new MongoClient(uri, {
 async function fetchDataFromMongoDB() {
   try {
     await client.connect();
-    const database = client.db("Pokemon");
-    const collection = database.collection("pokemon");
+    const database = client.db("pokedex");
+    const collection = database.collection("pokemons");
     return await collection.find().toArray();
   } finally {
     // No need to close the connection immediately; let it be managed elsewhere
@@ -32,6 +32,30 @@ router.get('/crud/Read', async (req, res) => {
   res.json(data);
 });
 
+
+
+router.post('/crud/Create', async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db("pokedex");
+    const collection = database.collection("pokemons");
+
+    // Assuming the request body contains the fields for the new Pokemon
+    const newPokemon = req.body;
+
+    const result = await collection.insertOne(newPokemon);
+    const insertedPokemon = result.ops[0];
+
+    res.status(201).json(insertedPokemon);
+  } catch (error) {
+    console.error("Failed to create Pokemon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
 // Delete (DELETE) an item by ID
 router.delete('/Delete/:id', async (req, res) => {
   try {
@@ -41,8 +65,8 @@ router.delete('/Delete/:id', async (req, res) => {
     }
 
     await client.connect();
-    const database = client.db("Pokemon");
-    const collection = database.collection("pokemon");
+    const database = client.db("pokedex");
+    const collection = database.collection("pokemons");
 
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
 

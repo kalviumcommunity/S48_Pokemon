@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AddPokemon from './AddPokemons';
 import '../css/LandingPage.css';
 //const LandingPage = () => {
   //return (
@@ -20,11 +21,17 @@ const Pokedex = () => {
 
   useEffect(() => {
     
-    fetch('http://localhost:3000/getpokemon')
+    fetch('http://localhost:3001/getpokemon')
         .then(response => response.json())
         .then(data => {  console.log('Fetched Pokemon data:', data); setPokemon(data)})
         .catch(error => console.error('Error fetching Pokemons:', error));
 }, []);
+
+const handleAddPokemon = updatedPokemons => {
+  // Update the state with the new list of Pokemon
+  setPokemons(updatedPokemons);
+
+};
 
   return(
 
@@ -32,9 +39,14 @@ const Pokedex = () => {
             <h2>Pokemon</h2>
             <ul>
                 {Pokemons.map(Pokemon => (
-                    <li key={Pokemon._id}>{Pokemon.Pokemon_Name} ({Pokemon.Pokemon_Type}) ({Pokemon.Region})</li> // Ensure the keys and structure match your database
+                     <li key={Pokemon._id} className="pokemon-item">
+                     <span className="pokemon-name">{Pokemon.Pokemon_Name}</span>
+                     <span className="pokemon-type">{Pokemon.Pokemon_Type}</span>
+                     <span className="pokemon-region">{Pokemon.Region}</span>
+                   </li>
                 ))}
             </ul>
+            <AddPokemon onAddPokemon={handleAddPokemon} />
         </div>
     );
 };
