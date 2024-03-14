@@ -5,7 +5,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Pokemondata = require('./Models/Pokemons.js');
 
-const port = process.env.PUBLIC_PORT || 3000;
+const port = process.env.PUBLIC_PORT || 3001;
 const app = express();
 
 app.use(cors());
@@ -52,6 +52,33 @@ app.get("/getpokemon", async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+app.post("/crud/Create", async (req, res) => {
+    try {
+      const { Pokemon_Name, Pokemon_Type, Region } = req.body;
+  
+      if (!Pokemon_Name || !Pokemon_Type || !Region) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+  
+      console.log('Adding a new Pokemon...');
+      const newPokemon = await Pokemondata.create({
+        Pokemon_Name,
+        Pokemon_Type,
+        Region,
+      });
+  
+      console.log('New Pokemon added:', newPokemon);
+      res.status(201).json(newPokemon);
+    } catch (error) {
+      console.error("Failed to add Pokemon:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+
+
 
 Connection().then(() => {
     app.listen(port, () => {
