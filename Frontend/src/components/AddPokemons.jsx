@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+// AddPokemon.jsx
+
+import React, { useState } from 'react';
+import '../css/AddPokemons.css';
 
 const AddPokemon = ({ onAddPokemon }) => {
   const [pokemonName, setPokemonName] = useState('');
@@ -39,24 +42,21 @@ const AddPokemon = ({ onAddPokemon }) => {
   };
 
   return (
-    <div>
+    <div className="add-pokemon-container">
       <h2>Add Pokemon</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          Pokemon Name:
+        <div className="form-group">
+          <label>Pokemon Name:</label>
           <input type="text" value={pokemonName} onChange={e => setPokemonName(e.target.value)} required />
-        </label>
-        <br />
-        <label>
-          Pokemon Type:
+        </div>
+        <div className="form-group">
+          <label>Pokemon Type:</label>
           <input type="text" value={pokemonType} onChange={e => setPokemonType(e.target.value)} required />
-        </label>
-        <br />
-        <label>
-          Region:
+        </div>
+        <div className="form-group">
+          <label>Region:</label>
           <input type="text" value={region} onChange={e => setRegion(e.target.value)} required />
-        </label>
-        <br />
+        </div>
         <button type="submit">Add Pokemon</button>
       </form>
     </div>
