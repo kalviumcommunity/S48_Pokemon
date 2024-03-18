@@ -33,6 +33,23 @@ router.get('/crud/Read', async (req, res) => {
 });
 
 
+router.get('/crud/Read/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("pokedex");
+    const collection = database.collection("pokemons");
+    const pokemon = await collection.findOne({ _id: ObjectId(id) });
+    if (pokemon) {
+      res.json(pokemon);
+    } else {
+      res.status(404).json({ message: 'Pokemon not found' });
+    }
+  } catch (error) {
+    console.error("Error fetching Pokemon details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 router.post('/crud/Create', async (req, res) => {
   try {
@@ -57,28 +74,54 @@ router.post('/crud/Create', async (req, res) => {
 
 
 // Delete (DELETE) an item by ID
-router.delete('/Delete/:id', async (req, res) => {
+router.put('/crud/Update/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'Invalid ID format' });
-    }
+    const { Pokemon_Name, Pokemon_Type, Region } = req.body;
 
     await client.connect();
     const database = client.db("pokedex");
     const collection = database.collection("pokemons");
 
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const result = await collection.updateOne({ _id: ObjectId(id) }, {
+      $set: {
+        Pokemon_Name: Pokemon_Name,
+        Pokemon_Type: Pokemon_Type,
+        Region: Region,
+      }
+    });
 
-    if (result.deletedCount === 1) {
-      const updatedData = await fetchDataFromMongoDB();
-      res.json(updatedData);
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: 'Pokemon updated successfully' });
     } else {
-      res.status(404).json({ message: 'Item not found' });
+      res.status(404).json({ message: 'Pokemon not found' });
     }
-  } finally {
-    // No need to close the connection immediately; let it be managed elsewhere
+  } catch (error) {
+    console.error("Failed to update Pokemon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.delete('/crud/Delete/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await client.connect();
+    const database = client.db("pokedex");
+    const collection = database.collection("pokemons");
+
+    const result = await collection.deleteOne({ _id: ObjectId(id) });
+
+    if (result.deletedCount === 1) {
+      res.status(200).json({ message: 'Pokemon deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Pokemon not found' });
+    }
+  } catch (error) {
+    console.error("Failed to delete Pokemon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 module.exports = router;

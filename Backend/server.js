@@ -53,6 +53,25 @@ app.get("/getpokemon", async (req, res) => {
   }
 });
 
+app.get('/crud/Read/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Find the Pokemon by id
+        const pokemon = await Pokemondata.findById(id);
+
+        if (pokemon) {
+            res.status(200).json(pokemon);
+        } else {
+            res.status(404).json({ message: 'Pokemon not found' });
+        }
+    } catch (error) {
+        console.error("Error fetching Pokemon details:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 
 app.post("/crud/Create", async (req, res) => {
     try {
@@ -77,6 +96,55 @@ app.post("/crud/Create", async (req, res) => {
     }
   });
   
+
+  // Update a Pokemon
+app.put('/crud/Update/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { Pokemon_Name, Pokemon_Type, Region } = req.body;
+
+        // Check if required fields are provided
+        if (!Pokemon_Name || !Pokemon_Type || !Region) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Find the Pokemon by id and update its details
+        const updatedPokemon = await Pokemondata.findByIdAndUpdate(
+            id,
+            { Pokemon_Name, Pokemon_Type, Region },
+            { new: true }
+        );
+
+        if (updatedPokemon) {
+            res.status(200).json({ message: 'Pokemon updated successfully', updatedPokemon });
+        } else {
+            res.status(404).json({ message: 'Pokemon not found' });
+        }
+    } catch (error) {
+        console.error("Failed to update Pokemon:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Delete a Pokemon
+app.delete('/crud/Delete/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Find the Pokemon by id and delete it
+        const deletedPokemon = await Pokemondata.findByIdAndDelete(id);
+
+        if (deletedPokemon) {
+            res.status(200).json({ message: 'Pokemon deleted successfully', deletedPokemon });
+        } else {
+            res.status(404).json({ message: 'Pokemon not found' });
+        }
+    } catch (error) {
+        console.error("Failed to delete Pokemon:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 
 
 
